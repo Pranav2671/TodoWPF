@@ -19,7 +19,7 @@ namespace TodoWPF.Services
         public TodoService()
         {
             _context = new TodoDbContext();
-            _context.Database.EnsureCreated(); //Create the database if it doesn't exist
+            
         }
 
         //get all items from DB newest first
@@ -34,7 +34,21 @@ namespace TodoWPF.Services
 
         public void Add(TodoItem item)
         {
-            _context.TodoItems.Add(item);
+            try
+            {
+                _context.TodoItems.Add(item);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Error saving to database:\n{ex.Message}");
+            }
+        }
+
+        //Update an existing item in the DB
+        public void Update(TodoItem item)
+        {
+            _context.TodoItems.Update(item);
             _context.SaveChanges();
         }
 

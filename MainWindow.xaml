@@ -4,26 +4,26 @@
         xmlns:vm="clr-namespace:TodoWPF.ViewModels"
         xmlns:conv="clr-namespace:TodoWPF.Converters"
         Title="Todo App"
-        WindowState="Maximized"
+        WindowState="Normal"
         WindowStyle="None"
-        Background="#E5E7EB">
+        Background="#1E1E1E"
+        Width="700" Height="600">
 
-    <!-- Connect ViewModel -->
     <Window.DataContext>
         <vm:TodoViewModel />
     </Window.DataContext>
 
-    <!-- Register converter -->
     <Window.Resources>
         <conv:BooleanToTextDecorationConverter x:Key="BooleanToTextDecorationConverter" />
 
-        <!-- Button style -->
+        <!-- Button Style -->
         <Style TargetType="Button">
-            <Setter Property="Background" Value="#4CAF50" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#2D2D30" />
+            <Setter Property="Foreground" Value="#E0E0E0" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Padding" Value="8,4" />
-            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#3C3C3C" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Margin" Value="5,0,0,0" />
             <Setter Property="Width" Value="90" />
@@ -31,96 +31,123 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="6">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#3A3A3D" />
+                    <Setter Property="BorderBrush" Value="#5A5A5D" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
-        <!-- TextBox style -->
+        <!-- TextBox Style -->
         <Style TargetType="TextBox">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="Padding" Value="8,4" />
-            <Setter Property="BorderBrush" Value="#CCCCCC" />
+            <Setter Property="Background" Value="#2D2D30" />
+            <Setter Property="Foreground" Value="#E0E0E0" />
+            <Setter Property="BorderBrush" Value="#3C3C3C" />
             <Setter Property="BorderThickness" Value="1" />
         </Style>
     </Window.Resources>
 
-    <!-- Full screen layout -->
     <Grid>
-        <!-- Centered main card -->
-        <Border Background="White"
-                CornerRadius="20"
+        <Border Background="#252526"
+                CornerRadius="16"
                 Padding="30"
-                Width="600"
+                Width="650"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="20" ShadowDepth="5" Opacity="0.3" />
+                <DropShadowEffect BlurRadius="20" ShadowDepth="5" Opacity="0.4" Color="#000000" />
             </Border.Effect>
 
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <!-- Header -->
                     <RowDefinition Height="Auto"/>
-                    <!-- Input -->
                     <RowDefinition Height="*"/>
-                    <!-- Todo list -->
                 </Grid.RowDefinitions>
 
                 <!-- Header -->
                 <DockPanel Grid.Row="0" Margin="0,0,0,20">
-                    <TextBlock Text="My Todo List"
+                    <TextBlock Text="🗒️ My Todo List"
                                FontSize="32"
                                FontWeight="Bold"
-                               Foreground="#1F2937"
+                               Foreground="#F5F5F5"
                                VerticalAlignment="Center"/>
                 </DockPanel>
 
-                <!-- Input + Add Button -->
+                <!-- Input -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
                     <TextBox Width="400"
                              Margin="0,0,10,0"
                              VerticalContentAlignment="Center"
-                             Text="{Binding NewTodoTitle, UpdateSourceTrigger=PropertyChanged}"
-                             ToolTip="Enter new task..."/>
-                    <Button Content="Add" Command="{Binding AddCommand}" />
+                             Text="{Binding NewTaskTitle, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Enter new task..." />
+                    <Button Content="➕ Add" Command="{Binding AddTodoCommand}" />
                 </StackPanel>
 
                 <!-- Todo List -->
                 <ListBox Grid.Row="2"
-                         ItemsSource="{Binding Todos}"
-                         Background="Transparent"
+                         ItemsSource="{Binding TodoItems}"
+                         Background="#1E1E1E"
                          BorderThickness="0">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border Padding="12" Margin="0,5" CornerRadius="10" Background="#F3F4F6">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay}" Grid.Column="0" Margin="0,0,10,0"/>
+                            <!-- Outer card -->
+                            <Border Padding="12"
+                                    Margin="0,5"
+                                    CornerRadius="8"
+                                    Background="#2D2D30"
+                                    Width="580">
+                                <!-- 👈 Fixed width for uniform boxes -->
+                                <DockPanel LastChildFill="True">
+                                    <!-- Task title on the left -->
                                     <TextBlock Text="{Binding Title}"
-                                               Grid.Column="1"
-                                               FontSize="16"
-                                               VerticalAlignment="Center"
-                                               TextDecorations="{Binding IsCompleted, Converter={StaticResource BooleanToTextDecorationConverter}}"/>
-                                    <Button Content="🗑"
-                                            Grid.Column="2"
-                                            Width="32"
-                                            Height="32"
-                                            Background="#FF6B6B"
-                                            Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                            CommandParameter="{Binding}"/>
-                                </Grid>
+                       FontSize="16"
+                       Foreground="#E0E0E0"
+                       VerticalAlignment="Center"
+                       TextDecorations="{Binding IsCompleted, Converter={StaticResource BooleanToTextDecorationConverter}}"
+                       TextTrimming="CharacterEllipsis"
+                       DockPanel.Dock="Left" />
+
+                                    <!-- Buttons on the right -->
+                                    <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        DockPanel.Dock="Right">
+                                        <Button Content="✏️"
+                        Width="32" Height="32"
+                        Command="{Binding DataContext.EditTodoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding}"
+                        ToolTip="Edit Task"/>
+
+                                        <Button Content="✅"
+                        Width="32" Height="32"
+                        Command="{Binding DataContext.MarkCompleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding}"
+                        ToolTip="Mark Complete"/>
+
+                                        <Button Content="❌"
+                        Width="32" Height="32"
+                        Foreground="#FF6B6B"
+                        Command="{Binding DataContext.DeleteTodoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="{Binding}"
+                        ToolTip="Delete Task"/>
+                                    </StackPanel>
+                                </DockPanel>
                             </Border>
                         </DataTemplate>
+
+
                     </ListBox.ItemTemplate>
                 </ListBox>
             </Grid>
