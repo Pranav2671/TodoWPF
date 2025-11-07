@@ -67,7 +67,7 @@ namespace TodoWPF.ViewModels
 
         private void AddTodo()
         {
-            MessageBox.Show($"Adding: {NewTaskTitle}");
+            
             if ((string.IsNullOrWhiteSpace(NewTaskTitle)))
             {
                 MessageBox.Show("Task title is empty.");
@@ -83,6 +83,8 @@ namespace TodoWPF.ViewModels
             TodoItems.Insert(0, newItem); //Add to the top of the list
             //MessageBox.Show($"Task count: {TodoItems.Count}");
 
+            MessageBox.Show($"Added task: {NewTaskTitle}");
+
             newItem.PropertyChanged += Todo_PropertyChanged; //Watch for changes
 
             NewTaskTitle = string.Empty; //Clear input
@@ -93,6 +95,7 @@ namespace TodoWPF.ViewModels
             if (item == null) return;
             _service.Delete(item); //Remove from DB
             TodoItems.Remove(item); //Remove from the list
+            MessageBox.Show($"Deleted task: {item.Title}");
         }
 
         private void EditTodo(TodoItem? item)
